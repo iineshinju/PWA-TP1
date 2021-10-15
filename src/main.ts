@@ -6,7 +6,7 @@ import { LogTests } from './utils';
  */
 function min(a: number, b: number): number {
     console.log("Ini entre", a, "et", b);
-    return NaN;
+    return (a<b ? a : b);
 }
 LogTests("Fonction qui renvoie le minimum de deux nombres", min, [
     {args: [17, 27], expectedResult: 17},
@@ -26,7 +26,15 @@ LogTests("Fonction qui renvoie le minimum de deux nombres", min, [
  */
 function triCroissant(...L: number[]): number[] {
     console.log(L);
-    return [];
+    /*let tri: number[] = [];
+    let copyL: number[] = L;
+    for (let i=0; i < copyL.length; i++) {
+        let mini = Math.min(...copyL);
+		tri.push(mini);
+        copyL[copyL.indexOf(mini)] = 1000;
+	}
+    return tri; */
+    return L.sort((n1:number, n2:number)=>n1-n2);
 }
 LogTests("Fonction qui trie des nombres par ordre croissant", triCroissant, [
     {args: [59, 51, 63, 95, 64, -38, -21, -6, 16, 44], expectedResult: [-38, -21, -6, 16, 44, 51, 59, 63, 64, 95]},
@@ -39,7 +47,15 @@ LogTests("Fonction qui trie des nombres par ordre croissant", triCroissant, [
  */
 function triDécroissant(...L: number[]): number[] {
     console.log(L);
-    return [];
+    /*let tri: number[] = [];
+    let copyL: number[] = L;
+    for (let i=0; i < copyL.length; i++) {
+        let mini = Math.max(...copyL);
+		tri.push(mini);
+        copyL[copyL.indexOf(mini)] = -1000;
+	}
+    return tri;*/
+    return L.sort((n1:number, n2:number)=>n2-n1);
 }
 LogTests("Fonction qui trie des nombres par ordre décroissant", triDécroissant, [
     {args: [59, 51, 63, 95, 64, -38, -21, -6, 16, 44], expectedResult: [95, 64, 63, 59, 51, 44, 16, -6, -21, -38]},
@@ -53,7 +69,10 @@ LogTests("Fonction qui trie des nombres par ordre décroissant", triDécroissant
  */
 function Somme(...L: number[]): number {
     console.log(L);
-    return NaN;
+    if (L.length <= 0)
+        throw "Impossible de sommer un tableau vide"; 
+    let somme = L.reduce( (accumulator, currentValue) => accumulator + currentValue);
+    return somme;
 }
 LogTests("Fonction qui somme", Somme, [
     {args: [59, 51, 63, 95, 64, -38, -21, -6, 16, 44], expectedResult: 327},
@@ -68,7 +87,12 @@ LogTests("Fonction qui somme", Somme, [
  */
 function Moyenne(...L: number[]): number {
     console.log(L);
-    return NaN;
+    let lengthL = L.length;
+    if (L.length <= 0)
+        throw "Impossible de faire la moyenne d'un tableau vide"; 
+    let somme = L.reduce( (accumulator, currentValue) => accumulator + currentValue);
+    let moyenne = somme / lengthL;
+    return moyenne;
 }
 LogTests("Fonction qui fait la moyenne", Moyenne, [
     {args: [59, 51, 63, 95, 64, -38, -21, -6, 16, 44], expectedResult: 32.7},
@@ -83,7 +107,13 @@ LogTests("Fonction qui fait la moyenne", Moyenne, [
  */
 function NombresSupérieursA(min: number, notes: number[]): number[] {
     console.log(min, notes);
-    return [];
+    /*let noteseuil : number[] = [];
+    for (let i=0; i < notes.length; i++){
+        if (notes[i] > min)
+            noteseuil.push(notes[i]);
+    }*/
+    let noteseuil = notes.filter( v => v > min );
+    return noteseuil.sort((n1:number, n2:number)=>n1-n2);
 }
 LogTests("Les nombres strictement supérieurs à un certain seuil", NombresSupérieursA, [
     {args: [10, [59, 51, 63, 95, 64, -38, -21, -6, 16, 44]], expectedResult: [16, 44, 51, 59, 63, 64, 95]},
@@ -99,6 +129,8 @@ LogTests("Les nombres strictement supérieurs à un certain seuil", NombresSupé
  */
 function NombresComprisEntre(min: number, max: number, notes: number[]): number[] {
     console.log(min, max, notes);
+    let noteseuil = notes.filter( v => v >= min && v <= max );
+    return noteseuil.sort((n1:number, n2:number)=>n1-n2);
     return [];
 }
 LogTests("Les nombres strictement compris entre une valeur minimale et maximale", NombresComprisEntre, [
@@ -124,8 +156,39 @@ LogTests("Les nombres strictement compris entre une valeur minimale et maximale"
  * ]
  */
 function Zip(...L: unknown[][]): unknown[][] {
-    console.log(L);
-    return [];
+    console.log("ZIP",L);
+    /*
+    let tabF: any = [];
+    let tabI: any = [];
+    if (L.length > 0){
+        
+        //v1 error
+        let j = 0;
+        for (let i=0; i < L.length; i++){
+            for (let j=0; j < L[i].length; i++){
+                console.log("L[i][j]", L[i][j]);
+                tabI.push(L[i][j]);
+                j++;
+            }
+            console.log("MA TABLE INTER 2",tabI);
+            tabF.push(tabI);
+            tabI = [];
+            console.log("MA TABLE FINAL",tabF);
+        }
+        //v2 error
+        for (let i=0; i < L.length;){
+            let j=0;
+            if (j < L[i].length){
+                console.log("L[i][j]", L[i][j]);
+                console.log("i :", i, " et j :", j);
+                i++;
+            }
+            j++;
+        }
+    }*/
+    let longest = L.reduce((a,b) => a.length > b.length ? a : b, []);
+    let mapping = longest.map( (_,i) => L.map( arr => arr[i]));
+    return mapping;
 }
 
 LogTests("Zip de tableaux", Zip, [
@@ -142,6 +205,12 @@ LogTests("Zip de tableaux", Zip, [
  */
 function ProduitScalaire(V1: number[], V2: number[]): number {
     console.log("ProduitScalaire", V1, V2);
+    if (V1.length === 0 || V2.length === 0)
+        throw "Les vecteurs doivent être non vides";
+    if (V1.length != V2.length)
+        throw 	"Les vecteurs doivent être de même taille"
+    
+    
     return 0;
 }
 LogTests("Produit scalaire entre deux vecteurs", ProduitScalaire, [
